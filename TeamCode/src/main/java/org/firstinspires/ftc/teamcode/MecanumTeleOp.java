@@ -25,8 +25,8 @@ public class MecanumTeleOp extends LinearOpMode {
         // Setting up the claw on the robot
         Servo clawLeft = hardwareMap.servo.get("servo0");
         Servo clawRight = hardwareMap.servo.get("servo1");
-        clawLeft.scaleRange(0.0, 1.0); //TODO Set the range that we can set the claws to
-        clawRight.scaleRange(0.0, 1.0);
+        clawLeft.scaleRange(0.22, 0.33);
+        clawRight.scaleRange(0.22, 0.37);
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -64,11 +64,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
             // We want to figure out what positions to set on the claw for open and close operations
             if (open_claw) {
-                clawLeft.setPosition(0.0);
+                clawLeft.setPosition(1.0);
                 clawRight.setPosition(1.0);
             } else if (close_claw) {
-                clawLeft.setPosition(1.0);
-                clawRight.setPosition(0.0); 
+                clawLeft.setPosition(0.0);
+                clawRight.setPosition(0.0);
             }
         }
     }
