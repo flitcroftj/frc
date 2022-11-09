@@ -43,8 +43,8 @@ public class AutoDriveByEncoder extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Setting up the claw on the robot
-    Servo clawLeft = hardwareMap.servo.get("servo1");
-    Servo clawRight = hardwareMap.servo.get("servo2");
+    private Servo clawLeft = hardwareMap.servo.get("servo0");
+    private Servo clawRight = hardwareMap.servo.get("servo1");
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -67,8 +67,8 @@ public class AutoDriveByEncoder extends LinearOpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        clawLeft.scaleRange(0.0, 1.0); //TODO Set the range that we can set the claws to
-        clawRight.scaleRange(0.0, 1.0);
+        clawLeft.scaleRange(0.22, 0.33); //TODO Set the range that we can set the claws to
+        clawRight.scaleRange(0.22, 0.37);
 
         // Initial setup for the motors
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
