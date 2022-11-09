@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
-package java.org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -36,21 +35,16 @@ public class AutoDriveByEncoder extends LinearOpMode {
 
     // Declare our motors
     // Make sure your ID's match your configuration
-    DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");//motor one
-    DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");//motor three
-    DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");// motor zero
-    DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");//motor two
+    private DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");//motor one
+    private DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");//motor three
+    private DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");// motor zero
+    private DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");//motor two
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     // Setting up the claw on the robot
-    Servo clawLeft = hardwareMap.servo.get("servo0");
-    Servo clawRight = hardwareMap.servo.get("servo1");
-    clawLeft.scaleRange(0.0, 1.0); //TODO Set the range that we can set the claws to
-    clawRight.scaleRange(0.0, 1.0);
-
-    // Reverse the right side motors
-    // Reverse left motors if you are using NeveRests
-    motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-    motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+    Servo clawLeft = hardwareMap.servo.get("servo1");
+    Servo clawRight = hardwareMap.servo.get("servo2");
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -62,12 +56,19 @@ public class AutoDriveByEncoder extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+            (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
     @Override
     public void runOpMode() {
+        // Reverse the right side motors
+        // Reverse left motors if you are using NeveRests
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        clawLeft.scaleRange(0.0, 1.0); //TODO Set the range that we can set the claws to
+        clawRight.scaleRange(0.0, 1.0);
 
         // Initial setup for the motors
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,12 +100,14 @@ public class AutoDriveByEncoder extends LinearOpMode {
      *  1) Move gets to the desired position
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
-     */ 
+     */
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+        int newBackLeftTarget;
+        int newBackRightTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
@@ -114,6 +117,7 @@ public class AutoDriveByEncoder extends LinearOpMode {
             newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newBackRightTarget = motorBackRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
             motorFrontLeft.setTargetPosition(newFrontLeftTarget);
             motorFrontRight.setTargetPosition(newFrontRightTarget);
             motorBackLeft.setTargetPosition(newBackLeftTarget);
@@ -139,9 +143,9 @@ public class AutoDriveByEncoder extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (motorFrontLeft.isBusy() && motorFrontRight.isBusy()) &&
-                   (motorBackLeft.isBusy() && motorBackRight.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (motorFrontLeft.isBusy() && motorFrontRight.isBusy()) &&
+                    (motorBackLeft.isBusy() && motorBackRight.isBusy())) {
             }
 
             // Stop all motion;
